@@ -5,6 +5,7 @@ interface IUser extends Document{
     last_name?:string
     email:string
     password:string
+    products:string
     token:string
     role:string 
     favorites:[]
@@ -26,39 +27,43 @@ const CustomerSchema:Schema=new Schema<IUser>({
         required:true,
         unique:true
     },
-    password:{type:String,required:true},
+    password:{type:String,required:true,min:6},
     token:String,
     role:{
         type:String,
         enum:Role,
         default:"Customer"
     },
+    products:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"product"
+        }
+    ],
     favorites:[
         {
-            _id:{
-                type:String,
-                required:true
-            },
-            name:String,
-            category:String,
-            desc:String,
-            isAvailable:Boolean
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"product"
         }
     ],
     cart:[
         {
-            _id:{
-                type:String,
-                required:true
-            },
-            name:String,
-            category:String,
-            desc:String,
-            price:Number
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"product"
         }
     ]
 },{
     timestamps:true
 })
 
-export default mongoose.model('customer',CustomerSchema)
+CustomerSchema.set('toJSON', {
+    transform: function(doc, ret, opt) {
+        delete ret['password']
+        delete ret['__v']
+        return ret
+    }
+})
+
+
+
+export default mongoose.model('user',CustomerSchema)

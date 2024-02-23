@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import Customer from '../models/customer'
+import Customer from '../models/user'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { validateEmail } from "../utils";
 
 export const createCustomer=async(req:Request,res:Response)=>{
     const {first_name,last_name,email,password,role}=req.body
@@ -11,15 +12,19 @@ export const createCustomer=async(req:Request,res:Response)=>{
             return res.status(200).json({message:"Email address provided already exist!"})
         }
         const hashedPassword=await bcrypt.hash(password,10)
-        const newCustomer=await Customer.create({
-            first_name,
-            last_name,
-            email,
-            password:hashedPassword,
-            role
-        })
-        newCustomer.save()
-        return res.status(201).json({message:"New Customer created",customer:newCustomer})
+        if(validateEmail(email)){
+            const newCustomer=await Customer.create({
+                first_name,
+                last_name,
+                email,
+                password:hashedPassword,
+                role
+            })
+            newCustomer.save()
+            return res.status(201).json({message:"New Customer created",customer:newCustomer})
+        }
+        return res.status(400).json({messge:"Invalid email format"})
+        
     } catch (error) {
         return res.status(500).json({message:"Internal Server Error",error})
     }
@@ -30,6 +35,10 @@ export const getUserByEmail=async(req:Request,res:Response,next:NextFunction)=>{
     const {email}=req.body
     try {
         const profile=await Customer.findOne({email})
+            .populate('products')
+            .populate('favorites')
+            .populate('cart')
+            .select("-__v")
         if(!profile){
             return res.status(200).json({message:"Email provided does not exist"})
         }
@@ -72,16 +81,16 @@ export const signIn=async(req:Request,res:Response)=>{
 // Edit profile
 export const EditProfile=async(req:Request,res:Response)=>{
     const {id}=req.params
-    const{first_name,last_name,emailpassword,role}=req.body
+    const{first_name,last_name,email,password,role}=req.body
 
     //@ts-ignore
     const token=req.token
     try {
-        const profile=await Customer.findById(token.userId)
+        // const profile=await Customer.findById(token.userId)
         //@ts-ignore
-        if(profile){
-            const result=await Customer.findByIdAndUpdate(token.userId,{
-                first_name,last_name,emailpassword,role
+        if(id == token.userId || token.role=='Admin'){
+            const result=await Customer.findByIdAndUpdate(id,{
+                first_name,last_name,email,password,role
             })
             result?.save()
             return res.status(200).json({message:"User Profile updated successfully!"})
