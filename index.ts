@@ -5,6 +5,12 @@ import { connect } from './database'
 import customerRouter from './routes/customer'
 import productRouter from './routes/product'
 import rateRouter from './routes/rate'
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import passport, { authenticate } from 'passport'
+import './strategies/google-strategy'
 
 
 dotEnv.config()
@@ -13,6 +19,10 @@ const PORT=process.env.PORT
 
 app.use(express.json())
 app.use(cors())
+app.use(cookieParser())
+
+app.use(passport.initialize())
+app.use(passport.session())
 
 // connect the database
 connect(`${process.env.MONGO_URI}`)
@@ -20,17 +30,69 @@ connect(`${process.env.MONGO_URI}`)
 //app events
 
 
+// Auth02
+
+app.post('/customer/auth',passport.authenticate('google'),(req:Request,res:Response)=>{
+  try {
+    
+  } catch (error) {
+    
+  }
+})
+
 
 app.use('/customer',customerRouter)
 app.use('/product',productRouter)
 app.use('/rate',rateRouter)
 
-app.use('*',async(req:Request,res:Response)=>{
-    return res.status(404).json({message:"Page not Found"})
-})
+
 
 app.get('/',(req:Request,res:Response)=>{
     return res.status(200).json({msg:"Welcome to shopping app customer server"})
+})
+
+const options = {
+    definition: {
+      openapi: "3.1.0",
+      info: {
+        title: "E-Commerce Express API with Swagger",
+        version: "0.1.0",
+        description:
+          "This is a simple E-Commerce API application made with Express and documented with Swagger",
+        license: {},
+        contact: {
+          name: "Developer",
+          url: "",
+          email: "ghislainkongolo0@gmail.com",
+        },
+      },
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
+      servers: [
+        {
+          url: "http://localhost:8000",
+        },
+      ],
+    },
+    apis: [path.resolve(__dirname,"./routes/*.ts")],
+  };
+  
+  //@ts-ignore
+  const specs = swaggerJsdoc(options);
+  app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs)
+  );
+  app.use('*',async(req:Request,res:Response)=>{
+    return res.status(404).json({message:"Page not Found"})
 })
 
 export const server=app.listen(PORT,()=>{

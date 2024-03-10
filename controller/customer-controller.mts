@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { validateEmail } from "../utils";
 
+
 export const createCustomer=async(req:Request,res:Response)=>{
     const {first_name,last_name,email,password,role}=req.body
     try {

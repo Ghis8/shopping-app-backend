@@ -1,10 +1,11 @@
 import {Router} from 'express'
-import { EditProfile, createCustomer, deleteUser, getUserByEmail, signIn } from '../controller/customer-controller'
+import { EditProfile, createCustomer, deleteUser, getUserByEmail, signIn } from '../controller/customer-controller.mjs'
 import { auth } from '../middleware/customer.protect'
 
 const router=Router()
 
 //create new customer
+
 
 router.post('/create',createCustomer)
 router.post('/',getUserByEmail)
