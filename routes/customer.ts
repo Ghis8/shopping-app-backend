@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import { EditProfile, createCustomer, deleteUser, getUserByEmail, signIn } from '../controller/customer-controller.mjs'
+import { EditProfile, createCustomer, deleteUser, getUserByEmail, signIn } from '../controller/customer-controller'
 import { auth } from '../middleware/customer.protect'
 
 const router=Router()
