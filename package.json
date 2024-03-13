@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
+  "type":"module",
   "scripts": {
     "test": "jest",
     "build": "npx tsc",
-    "dev": "nodemon index.ts",
-    "start": "npx tsc && node dist/index.js"
+    "dev": "nodemon --experimental-modules index.ts",
+    "start": "npx tsc && node --experimental-modules dist/index.js"
   },
   "keywords": [],
   "author": "",
