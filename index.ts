@@ -8,6 +8,7 @@ import rateRouter from './routes/rate'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import path from 'path'
+import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import passport, { authenticate } from 'passport'
 import './strategies/google-strategy'
@@ -17,6 +18,12 @@ dotEnv.config()
 const app:Express=express()
 const PORT=process.env.PORT
 
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 app.use(express.json())
 app.use(cors())
 app.use(cookieParser())
@@ -31,7 +38,6 @@ connect(`${process.env.MONGO_URI}`)
 
 
 // Auth02
-
 app.post('/customer/auth',passport.authenticate('google'),(req:Request,res:Response)=>{
   try {
     

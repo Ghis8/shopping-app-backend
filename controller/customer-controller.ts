@@ -53,7 +53,7 @@ export const getUserByEmail=async(req:Request,res:Response,next:NextFunction)=>{
 export const signIn=async(req:Request,res:Response)=>{
     const {email,password}=req.body
     try {
-        const profile=await Customer.findOne({email})
+        const profile=await Customer.findOne({email}).populate('favorites').populate('cart')
         if(profile){
             // @ts-ignore
             const validatePassword=await bcrypt.compare(password,profile.password)
@@ -69,7 +69,7 @@ export const signIn=async(req:Request,res:Response)=>{
                 })
                 profile.token=token
                 profile.save()
-                return res.status(200).json({message:"User log in successfully",user:profile})
+                return res.cookie("user",profile.first_name + ' '+profile.last_name,{maxAge:360000+ Date.now()}).status(200).json({message:"User log in successfully",user:profile})
             }
             return res.status(400).json({message:"Wrong Password"})
         }
@@ -121,4 +121,10 @@ export const deleteUser=async(req:Request,res:Response)=>{
     } catch (error) {
         return res.status(500).json({message:"Internal Server Error",error})
     }
+}
+
+export const Logout=async(req:Request,res:Response)=>{
+    //@ts-ignore
+    const token=req.token
+    
 }
