@@ -15,7 +15,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
    const decoded = jwt.verify(token, `${process.env.TOKEN_SECRET}`);
    (req as CustomRequest).token = decoded;
-
    next();
  } catch (err) {
    res.status(401).json({message:'Please login to Access',err});
