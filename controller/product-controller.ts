@@ -12,19 +12,19 @@ export const createProduct=async(req:Request,res:Response)=>{
     const token=req.token
     try {
         if(token.role === 'Seller'){
-            const user=await User.findById({_id:token.userId}).populate('products')
+            const user=await User.findById({id:token.userId}).populate('products')
             // console.log(user)
             //@ts-ignore
-            if(user.products.length > 0){
-                //@ts-ignore
-                let existingProduct= user.products.filter(product=> product.name=== name)
-                // console.log("exist",existingProduct)
-                if (existingProduct.length > 0){
+            // if(user.products.length > 0){
+            //     //@ts-ignore
+            //     let existingProduct= user.products.filter(product=> product.name === name)
+            //     // console.log("exist",existingProduct)
+            //     if (existingProduct.length > 0){
                     
-                    // TODO: UPDATE EXISTING PRODUCT
-                }
+            //         // TODO: UPDATE EXISTING PRODUCT
+            //     }
                 
-            }
+            // }
             const newProduct=await Product.create({
                 owner:token.userId,
                 name,
@@ -32,17 +32,22 @@ export const createProduct=async(req:Request,res:Response)=>{
                 price,
                 images
             })
-            const profile=await User.findByIdAndUpdate({id:token.userId},{
-                $push:{
-                    products:{
-                        _id:newProduct._id
+            if(newProduct){
+                const profile=await User.findByIdAndUpdate({id:token.userId},{
+                    $push:{
+                        products:{
+                            _id:newProduct._id
+                        }
                     }
-                }
-            })
-            //@ts-ignore
-            profile.save()
-            newProduct.save()
-            return res.status(201).json({message:`Product "${name}" created Successfully!`,product:newProduct})
+                })
+                //@ts-ignore
+                profile.save()
+                newProduct.save()
+                return res.status(201).json({message:`Product "${name}" created Successfully!`,product:newProduct})
+            }
+            return res.status(400).json({message:"unable to create new product"})
+                
+            
         }
         return res.status(401).json({message:"You are unauthorized to perform this action"})
         
@@ -58,7 +63,7 @@ export const getAllProducts=async(req:Request,res:Response)=>{
     try {
         if(token.role == 'Customer' || token.role == 'Admin'){
             const products=await Product.find()
-                .populate('owner')
+                .populate({path:'owner',select:['first_name','last_name']})
             return res.status(200).json({products})
         }
         else if(token.role == 'Seller')
@@ -169,4 +174,7 @@ export const getProductById=async(req:Request,res:Response)=>{
         return res.status(500).json({message:"Internal Server Error",error})
     }
 }
+
+//delete product
+
 

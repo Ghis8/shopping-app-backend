@@ -36,7 +36,7 @@ const CustomerSchema:Schema=new Schema<IUser>({
     },
     products:[
         {
-            type:Schema.Types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"product"
         }
     ],
@@ -56,13 +56,32 @@ const CustomerSchema:Schema=new Schema<IUser>({
     timestamps:true
 })
 
-CustomerSchema.set('toJSON', {
-    transform: function(doc, ret, opt) {
-        delete ret['password']
-        delete ret['__v']
-        return ret
+CustomerSchema.methods.toJSON=function(){
+    const user=this 
+    const userObj=user.toObject()
+    if(userObj.role === "Seller"){
+        delete userObj.favorites 
+        delete userObj.cart
+        delete userObj.password
+        delete userObj.__v
+        return userObj
     }
-})
+    else if(userObj.role === "Customer"){
+        delete userObj.products 
+        delete userObj.password
+        delete userObj.__v
+        return userObj
+    }else{
+        delete userObj.products
+        delete userObj.favorites 
+        delete userObj.cart
+        delete userObj.password
+        delete userObj.__v
+        return userObj
+    }
+}
+
+
 
 
 

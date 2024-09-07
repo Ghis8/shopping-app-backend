@@ -47,9 +47,9 @@ app.post('/customer/auth',passport.authenticate('google'),(req:Request,res:Respo
 })
 
 
-app.use('/customer',customerRouter)
-app.use('/product',productRouter)
-app.use('/rate',rateRouter)
+app.use('/api/v1/customer',customerRouter)
+app.use('/api/v1/product',productRouter)
+app.use('/api/v1/rate',rateRouter)
 
 
 
@@ -83,7 +83,7 @@ const options = {
       },
       servers: [
         {
-          url: "http://localhost:8000",
+          url: `http://localhost:${PORT}`,
         },
       ],
     },

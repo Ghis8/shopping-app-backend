@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import { validateEmail } from "../utils";
 
 
+
 export const createCustomer=async(req:Request,res:Response)=>{
     const {first_name,last_name,email,password,role}=req.body
     try {
@@ -81,7 +82,8 @@ export const signIn=async(req:Request,res:Response)=>{
 
 // Edit profile
 export const EditProfile=async(req:Request,res:Response)=>{
-    const {id}=req.params
+    //@ts-ignore
+    const {id}=req.query
     const{first_name,last_name,email,password,role}=req.body
 
     //@ts-ignore
@@ -107,9 +109,11 @@ export const EditProfile=async(req:Request,res:Response)=>{
 //delete user by id
 
 export const deleteUser=async(req:Request,res:Response)=>{
-    const {id}=req.params
+    //@ts-ignore
+    const {id}=req.query
     //@ts-ignore
     const token=req.token
+    
     try {
         const profile=await Customer.findById(token.userId)
         //@ts-ignore
