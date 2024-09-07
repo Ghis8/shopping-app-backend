@@ -85,8 +85,8 @@ router.post('/create',createCustomer)
      */
 router.post('/',getUserByEmail)
 router.post('/login',signIn)
-router.put('/:id',auth,EditProfile)
-router.delete('/:id',auth,deleteUser)
+router.put('/',auth,EditProfile)
+router.delete('/',auth,deleteUser)
 
 
 export default router
