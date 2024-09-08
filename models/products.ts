@@ -11,13 +11,13 @@ interface IProduct extends Document{
 }
 
 enum categories{
-    Phones,
-    Computers,
-    Accessories,
-    Furniture,
-    Clothes,
-    Shoes,
-    Automobile
+    Phones="phones",
+    Computers="computers",
+    Accessories="accessories",
+    Furniture="furniture",
+    Clothes="clothes",
+    Shoes="shoes",
+    Automobile="automobile"
 }
 
 
@@ -35,11 +35,15 @@ const ProductSchema:Schema=new Schema({
     category:{
         type:String,
         enum:categories,
-        default:"Phones"
+        default:"phones"
     },
     price:{
         type:Number,
         required:true
+    },
+    numStock:{
+        type:Number,
+        default:1
     },
     images:Array,
     ratings:[

@@ -7,49 +7,13 @@ import User from '../models/user'
 
 // create product
 export const createProduct=async(req:Request,res:Response)=>{
-    const {name,desc,price,images}=req.body
+    const {name,desc,price,images,numStock}=req.body
     //@ts-ignore
     const token=req.token
+    //@ts-ignore
+    const id=req.token.userId
     try {
-        if(token.role === 'Seller'){
-            const user=await User.findById({id:token.userId}).populate('products')
-            // console.log(user)
-            //@ts-ignore
-            // if(user.products.length > 0){
-            //     //@ts-ignore
-            //     let existingProduct= user.products.filter(product=> product.name === name)
-            //     // console.log("exist",existingProduct)
-            //     if (existingProduct.length > 0){
-                    
-            //         // TODO: UPDATE EXISTING PRODUCT
-            //     }
-                
-            // }
-            const newProduct=await Product.create({
-                owner:token.userId,
-                name,
-                desc,
-                price,
-                images
-            })
-            if(newProduct){
-                const profile=await User.findByIdAndUpdate({id:token.userId},{
-                    $push:{
-                        products:{
-                            _id:newProduct._id
-                        }
-                    }
-                })
-                //@ts-ignore
-                profile.save()
-                newProduct.save()
-                return res.status(201).json({message:`Product "${name}" created Successfully!`,product:newProduct})
-            }
-            return res.status(400).json({message:"unable to create new product"})
-                
-            
-        }
-        return res.status(401).json({message:"You are unauthorized to perform this action"})
+        
         
     } catch (error) {
         return res.status(500).json({message:"Internal Server Error",error})
