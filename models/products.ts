@@ -29,7 +29,8 @@ const ProductSchema:Schema=new Schema({
     },
     name:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     desc:String,
     category:{
@@ -53,5 +54,7 @@ const ProductSchema:Schema=new Schema({
         }
     ]
 },{timestamps:true})
+
+
 
 export default mongoose.model('product',ProductSchema)
