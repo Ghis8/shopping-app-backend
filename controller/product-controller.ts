@@ -13,7 +13,13 @@ export const createProduct=async(req:Request,res:Response)=>{
     //@ts-ignore
     const id=req.token.userId
     try {
-        
+        const foundProduct=await Product.findOne({name})
+        if(foundProduct){
+            let id=foundProduct.id
+            await Product.findByIdAndUpdate(id,{
+                numStock:numStock
+            })
+        }
         
     } catch (error) {
         return res.status(500).json({message:"Internal Server Error",error})
