@@ -12,18 +12,28 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import passport, { authenticate } from 'passport'
 import './strategies/google-strategy'
+import RedisStore from 'connect-redis'
 
 
 dotEnv.config()
 const app:Express=express()
 const PORT=process.env.PORT
 
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
-}))
+// app.use(session({
+//   secret: 'keyboard cat',
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: true }
+// }))
+
+// app.use(
+//   session({
+//     store: new RedisStore({ client: redisClient }), // Set up Redis client
+//     secret: 'your-secret',
+//     resave: false,
+//     saveUninitialized: false,
+//   })
+// );
 app.use(express.json())
 app.use(cors())
 app.use(cookieParser())
