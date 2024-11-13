@@ -11,13 +11,13 @@ interface IProduct extends Document{
 }
 
 enum categories{
-    Phones,
-    Computers,
-    Accessories,
-    Furniture,
-    Clothes,
-    Shoes,
-    Automobile
+    Phones="phones",
+    Computers="computers",
+    Accessories="accessories",
+    Furniture="furniture",
+    Clothes="clothes",
+    Shoes="shoes",
+    Automobile="automobile"
 }
 
 
@@ -29,17 +29,22 @@ const ProductSchema:Schema=new Schema({
     },
     name:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     desc:String,
     category:{
         type:String,
         enum:categories,
-        default:"Phones"
+        default:"phones"
     },
     price:{
         type:Number,
         required:true
+    },
+    numStock:{
+        type:Number,
+        default:1
     },
     images:Array,
     ratings:[
@@ -49,5 +54,7 @@ const ProductSchema:Schema=new Schema({
         }
     ]
 },{timestamps:true})
+
+
 
 export default mongoose.model('product',ProductSchema)
