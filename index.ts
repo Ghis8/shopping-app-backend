@@ -54,7 +54,7 @@ app.use('/api/v1/rate',rateRouter)
 
 
 app.get('/',(req:Request,res:Response)=>{
-    return res.status(200).json({msg:"Welcome to shopping app customer server"})
+    return res.send("Welcome to shopping app customer server")
 })
 
 const options = {
@@ -98,7 +98,7 @@ const options = {
     swaggerUi.setup(specs)
   );
   app.use('*',async(req:Request,res:Response)=>{
-    return res.status(404).json({message:"Page not Found"})
+    return res.send("Page not Found")
 })
 
 export const server=app.listen(PORT,()=>{
